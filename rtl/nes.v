@@ -76,6 +76,7 @@ module NES(
 	input         pausecore,
 	output        corepaused,
 	input   [1:0] sys_type,
+	input         swap_duty_cycle,
 	output  [1:0] nes_div,
 	input  [63:0] mapper_flags,
 	output [15:0] sample,         // sample generated from APU
@@ -468,6 +469,7 @@ APU apu(
 	.PHI2           (phi2),
 	.CS             (apu_cs),
 	.PAL            (sys_type[0]),
+	.swap_duty_cycle(swap_duty_cycle),
 	.ce             (apu_ce),
 	.reset          (reset),
 	.cold_reset     (cold_reset),

@@ -132,6 +132,7 @@ module SquareChan (
 	input  logic       Env_Clock,
 	input  logic       odd_or_even,
 	input  logic       Enabled,
+	input  logic       swap_duty_cycle,
 	output logic [3:0] Sample,
 	output logic       IsNonZero
 );
@@ -197,8 +198,8 @@ module SquareChan (
 		// The wave forms nad barrel shifter are abstracted simply here
 		case (Duty)
 			0: DutyEnabled = (SeqPos == 7);
-			1: DutyEnabled = (SeqPos >= 6);
-			2: DutyEnabled = (SeqPos >= 4);
+			1: DutyEnabled = swap_duty_cycle ? (SeqPos >= 4) : (SeqPos >= 6);
+			2: DutyEnabled = swap_duty_cycle ? (SeqPos >= 6) : (SeqPos >= 4);
 			3: DutyEnabled = (SeqPos < 6);
 		endcase
 	end
@@ -875,6 +876,7 @@ module APU #(parameter [9:0] SSREG_INDEX_TOP, parameter [9:0] SSREG_INDEX_DMC1, 
 	input  logic        cold_reset,
 	input  logic        allow_us,       // Set to 1 to allow ultrasonic frequencies
 	input  logic        PAL,
+	input  logic        swap_duty_cycle,// Duty cycle bug found in famiclones based on UMC chips
 	input  logic  [4:0] ADDR,           // APU Address Line
 	input  logic  [7:0] DIN,            // Data to APU
 	input  logic        RW,
@@ -1020,6 +1022,7 @@ module APU #(parameter [9:0] SSREG_INDEX_TOP, parameter [9:0] SSREG_INDEX_DMC1, 
 		.Env_Clock    (ClkE),
 		.odd_or_even  (odd_or_even),
 		.Enabled      (Enabled[0]),
+		.swap_duty_cycle(swap_duty_cycle),
 		.Sample       (Sq1Sample),
 		.IsNonZero    (Sq1NonZero)
 	);
@@ -1041,6 +1044,7 @@ module APU #(parameter [9:0] SSREG_INDEX_TOP, parameter [9:0] SSREG_INDEX_DMC1, 
 		.Env_Clock    (ClkE),
 		.odd_or_even  (odd_or_even),
 		.Enabled      (Enabled[1]),
+		.swap_duty_cycle(swap_duty_cycle),
 		.Sample       (Sq2Sample),
 		.IsNonZero    (Sq2NonZero)
 	);

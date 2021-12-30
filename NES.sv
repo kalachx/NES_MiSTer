@@ -200,7 +200,7 @@ video_freak video_freak
 // 0         1         2         3          4         5         6
 // 01234567890123456789012345678901 23456789012345678901234567890123
 // 0123456789ABCDEFGHIJKLMNOPQRSTUV 0123456789ABCDEFGHIJKLMNOPQRSTUV
-// XXXXXXXX XX XXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXX
+// XXXXXXXX XXXXXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXX
 
 `include "build_id.v"
 parameter CONF_STR = {
@@ -241,6 +241,7 @@ parameter CONF_STR = {
 	"P1OP,Extra Sprites,Off,On;",
 	"P1-;",
 	"P1OUV,Audio Enable,Both,Internal,Cart Expansion,None;",
+	"P1OB,Duty Cycle Swap Bug,Disabled,Enabled;",
 	"P2,Input Options;",
 	"P2-;",
 	"P2O9,Swap Joysticks,No,Yes;",
@@ -752,8 +753,8 @@ wire reset_nes =
 	loader_fail    ||
 	bk_loading     ||
 	bk_loading_req ||
-	hold_reset     ||
-	(old_sys_type != status[24:23]);
+	hold_reset;
+//	(old_sys_type != status[24:23]);
 
 reg [1:0] old_sys_type;
 always @(posedge clk) old_sys_type <= status[24:23];
@@ -804,6 +805,7 @@ NES nes (
 	.pausecore       (pausecore),
 	.corepaused      (corepaused),
 	.sys_type        (status[24:23]),
+	.swap_duty_cycle (status[11]),
 	.nes_div         (nes_ce),
 	.mapper_flags    (downloading ? 64'd0 : mapper_flags),
 	.gg              (status[20]),
